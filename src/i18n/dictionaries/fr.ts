@@ -272,7 +272,7 @@ const fr: Dictionary = {
       submit: "Extraire l'historique",
       invalid: "Ce n'est pas une adresse (0x + 40 caractères).",
       samples: "Ou essayez un exemple",
-      campus: { name: "Campus Builders DAO", body: "La trésorerie d'une association étudiante" },
+      campus: { name: "Campus Builders DAO", body: "La trésorerie d'une association étudiante", wallet: "Trésorerie" },
       lea: { name: "Léa Tremblay", body: "Une développeuse à la pige payée en jetons" },
     },
 
@@ -388,6 +388,7 @@ const fr: Dictionary = {
       empty: "Aucune règle pour l'instant. Créez-en une depuis n'importe quelle écriture.",
       remove: "Supprimer la règle pour {name}",
       applies: "{n} écritures",
+      applyOne: "1 écriture",
     },
 
     empty: {
@@ -407,6 +408,7 @@ const fr: Dictionary = {
       totalExpenses: "Total des dépenses et frais",
       net: "Résultat net",
       entries: "{n} écritures",
+      entry: "1 écriture",
       notCounted: "Pas encore comptées : {n} écritures à vérifier.",
       reviewLink: "Les vérifier",
       internal: "{n} transferts internes exclus.",

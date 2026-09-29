@@ -42,7 +42,7 @@ export function RulesDialog({ books, entries }: { books: Books; entries: Entry[]
                     <p className="truncate font-bold">{name}</p>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       <CategoryChip category={rule.category} label={app.categories[rule.category]} />
-                      {t(r.applies, { n })}
+                      {n === 1 ? r.applyOne : t(r.applies, { n })}
                     </div>
                   </div>
                   <Button variant="ghost" size="icon-sm" onClick={() => removeRule(rule.id)} aria-label={t(r.remove, { name })}>

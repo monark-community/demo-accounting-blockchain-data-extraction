@@ -270,7 +270,7 @@ const en = {
       submit: "Extract history",
       invalid: "Not a wallet address (0x + 40 characters).",
       samples: "Or try a sample",
-      campus: { name: "Campus Builders DAO", body: "A student association's treasury" },
+      campus: { name: "Campus Builders DAO", body: "A student association's treasury", wallet: "Treasury" },
       lea: { name: "Léa Tremblay", body: "A freelance developer paid in tokens" },
     },
 
@@ -386,6 +386,7 @@ const en = {
       empty: "No rules yet. Create one from any entry.",
       remove: "Remove rule for {name}",
       applies: "{n} entries",
+      applyOne: "1 entry",
     },
 
     empty: {
@@ -405,6 +406,7 @@ const en = {
       totalExpenses: "Total expenses and fees",
       net: "Net result",
       entries: "{n} entries",
+      entry: "1 entry",
       notCounted: "Not counted yet: {n} entries need review.",
       reviewLink: "Review them",
       internal: "{n} own-wallet transfers left out.",

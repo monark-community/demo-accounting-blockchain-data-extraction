@@ -86,7 +86,7 @@ function Report({ books, period, currency }: { books: Books; period: PeriodId; c
 
       <div className="grid items-start gap-6 lg:grid-cols-[1.35fr_1fr]">
         <StatementCard st={st} currency={currency} />
-        <div className="flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-6">
           <SealCard books={books} entries={entries} period={period} review={st.review} count={st.count} />
           <ExportCard books={books} entries={entries} period={period} currency={currency} count={st.count} />
         </div>
@@ -102,7 +102,7 @@ function StatementCard({ st, currency }: { st: Statement; currency: Currency }) 
   const max = Math.max(1, ...st.income.map((x) => x.total), ...st.expenses.map((x) => x.total), st.fees)
 
   return (
-    <section aria-labelledby="statement-title" className="rounded-3xl border bg-card p-5 sm:p-7">
+    <section aria-labelledby="statement-title" className="min-w-0 rounded-3xl border bg-card p-5 sm:p-7">
       <h2 id="statement-title" className="text-xl font-bold">
         {r.statement}
       </h2>
@@ -124,7 +124,7 @@ function StatementCard({ st, currency }: { st: Statement; currency: Currency }) 
           <h3 className="eyebrow mt-6 text-muted-foreground">{r.income}</h3>
           <ul className="mt-1 divide-y">
             {st.income.map((x) => (
-              <StatementRow key={x.category} label={app.categories[x.category]} value={money(x.total)} ratio={x.total / max} count={t(r.entries, { n: x.count })} tone="income" />
+              <StatementRow key={x.category} label={app.categories[x.category]} value={money(x.total)} ratio={x.total / max} count={x.count === 1 ? r.entry : t(r.entries, { n: x.count })} tone="income" />
             ))}
           </ul>
           <p className="flex justify-between border-t-2 border-foreground/80 py-2.5 font-bold">
@@ -135,7 +135,7 @@ function StatementCard({ st, currency }: { st: Statement; currency: Currency }) 
           <h3 className="eyebrow mt-6 text-muted-foreground">{r.expenses}</h3>
           <ul className="mt-1 divide-y">
             {st.expenses.map((x) => (
-              <StatementRow key={x.category} label={app.categories[x.category]} value={money(x.total)} ratio={x.total / max} count={t(r.entries, { n: x.count })} tone="expense" />
+              <StatementRow key={x.category} label={app.categories[x.category]} value={money(x.total)} ratio={x.total / max} count={x.count === 1 ? r.entry : t(r.entries, { n: x.count })} tone="expense" />
             ))}
             <StatementRow label={r.fees} value={money(st.fees)} ratio={st.fees / max} tone="expense" />
           </ul>
@@ -158,7 +158,7 @@ function StatementCard({ st, currency }: { st: Statement; currency: Currency }) 
 function StatementRow({ label, value, ratio, count, tone }: { label: string; value: string; ratio: number; count?: string; tone: "income" | "expense" }) {
   return (
     <li className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1.5 py-2.5">
-      <span className="min-w-0 truncate">
+      <span className="min-w-0">
         {label}
         {count ? <span className="ml-2 text-xs text-muted-foreground">{count}</span> : null}
       </span>

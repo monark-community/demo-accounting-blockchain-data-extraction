@@ -16,22 +16,11 @@ export function formatMoney(n: number, currency: Currency, locale: Locale): stri
   }).format(n)
 }
 
-/** Compact money for tight spots ($27.4K). */
-export function formatMoneyCompact(n: number, currency: Currency, locale: Locale): string {
-  return new Intl.NumberFormat(intlLocale[locale], {
-    style: "currency",
-    currency,
-    currencyDisplay: "narrowSymbol",
-    notation: Math.abs(n) >= 10_000 ? "compact" : "standard",
-    maximumFractionDigits: Math.abs(n) >= 10_000 ? 1 : 0,
-  }).format(n)
-}
-
 export const tokenDecimals = (token: TokenSymbol) => (token === "tETH" ? 4 : 2)
 
 export function formatToken(amount: number, token: TokenSymbol, locale: Locale): string {
   const d = tokenDecimals(token)
-  return `${new Intl.NumberFormat(intlLocale[locale], { minimumFractionDigits: token === "tETH" ? 0 : 2, maximumFractionDigits: d }).format(amount)} ${token}`
+  return `${new Intl.NumberFormat(intlLocale[locale], { minimumFractionDigits: 2, maximumFractionDigits: d }).format(amount)} ${token}`
 }
 
 export function formatBlock(block: number, locale: Locale): string {

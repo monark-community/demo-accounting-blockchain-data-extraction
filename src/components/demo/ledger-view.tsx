@@ -54,11 +54,12 @@ export function LedgerView() {
   const startSample = useCallback(
     (id: SampleId) => {
       const s = SAMPLES[id]
-      pending.current = { mode: "open", name: s.books, sample: id, wallet: s.wallet }
+      const wallet = id === "campus" ? { ...s.wallet, name: app.start.campus.wallet } : s.wallet
+      pending.current = { mode: "open", name: s.books, sample: id, wallet }
       setExtractingName(s.books)
       ex.start(s.wallet.address)
     },
-    [ex]
+    [ex, app.start.campus.wallet]
   )
 
   const startAddress = useCallback(
@@ -456,7 +457,7 @@ function EntryTable({
             <th scope="col" className="hidden w-52 px-4 py-2.5 md:table-cell">
               {tb.category}
             </th>
-            <th scope="col" className="w-36 px-4 py-2.5 text-right sm:w-44">
+            <th scope="col" className="w-[9.5rem] py-2.5 pr-4 pl-2 text-right sm:w-44 sm:pl-4">
               {tb.amount}
             </th>
             <th scope="col" className="hidden w-32 px-4 py-2.5 text-right lg:table-cell">
@@ -501,11 +502,11 @@ function EntryTable({
                     <span className="mt-1 block text-xs text-muted-foreground">{app.sources[e.source]}</span>
                   ) : null}
                 </td>
-                <td className="px-4 py-3 text-right align-top">
-                  <span className={cn("block font-mono text-[0.8125rem] font-semibold tabular-nums", e.direction === "in" && e.category !== "internal" && "text-success")}>
+                <td className="py-3 pr-4 pl-2 text-right align-top sm:pl-4">
+                  <span className={cn("block font-mono text-xs font-semibold whitespace-nowrap tabular-nums sm:text-[0.8125rem]", e.direction === "in" && e.category !== "internal" && "text-success")}>
                     {e.method === "approve" ? "—" : `${e.direction === "in" ? "+" : "−"}${formatToken(e.amount, e.token, locale)}`}
                   </span>
-                  {e.received ? <span className="block font-mono text-xs text-muted-foreground tabular-nums">+{formatToken(e.received.amount, e.received.token, locale)}</span> : null}
+                  {e.received ? <span className="block font-mono text-xs whitespace-nowrap text-muted-foreground tabular-nums">+{formatToken(e.received.amount, e.received.token, locale)}</span> : null}
                   <span className="block text-xs text-muted-foreground tabular-nums lg:hidden">
                     {e.method === "approve" ? t(tb.fee, { value: formatMoney(fee, currency, locale) }) : formatMoney(valueOf(e, currency), currency, locale)}
                   </span>
