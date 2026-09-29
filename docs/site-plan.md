@@ -217,3 +217,5 @@ LedgerLift is Monark community tooling: **free, included in the Monark bundle**,
 - Standard shell from Splitflow (`brand.tsx`, `header.tsx`, `demo-chip.tsx`…), Demo chip tint `bg-primary/8 dark:bg-primary/15`.
 - Locale routes via `src/proxy.ts`; typed dictionaries; `Intl` for numbers, currency and dates.
 - Demo data layer: `types.ts`, `prices.ts` (daily price series), `seed.ts` (samples and generated histories), `classify.ts` (priority rules), `extract.ts` (simulated indexer with progress and failure), `report.ts` (statement, CSV, journal, fingerprint), `store.ts` (persisted store), `chain.ts` / `wallet.ts` (simulated signing).
+- Toasts appear only for "Demo reset" (top-right on desktop, bottom on phones). Every other result is confirmed in place (the row, the notice line, the seal card), so nothing overlays the content it reports on.
+- Visual check: `scripts/screenshots.mjs` walks every page and all four flows (including the failed extraction, the rejected seal and the stale seal) at 390 and 1440 px, light and dark in English, plus French at both widths. Output in `docs/screenshots/`.
