@@ -50,8 +50,8 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
         </nav>
       </div>
 
-      {/* Band 2: Monark */}
-      <div className="border-t">
+      {/* Band 2: Monark. Bands 2 and 3 sit on a darker surface, like monark.io's lowest band. */}
+      <div className="border-t bg-secondary dark:bg-[oklch(from_var(--background)_calc(l-0.05)_c_h)]">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-3">
             <p className="text-sm font-semibold">{f.builtBy}</p>
@@ -64,12 +64,12 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
           <div className="flex flex-col gap-4 md:items-end">
             <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
               <li>
-                <a href={projectUrl} className="inline-flex min-h-11 items-center text-primary-ink underline underline-offset-4 md:min-h-0">
+                <a href={projectUrl} className="inline-flex min-h-11 items-center text-foreground underline underline-offset-4 md:min-h-0">
                   {f.projectPage}
                 </a>
               </li>
               <li>
-                <a href={REPO_URL} className="inline-flex min-h-11 items-center text-primary-ink underline underline-offset-4 md:min-h-0">
+                <a href={REPO_URL} className="inline-flex min-h-11 items-center text-foreground underline underline-offset-4 md:min-h-0">
                   {f.repo}
                 </a>
               </li>
@@ -81,7 +81,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
                     href={s.url}
                     aria-label={f.social[s.key]}
                     title={f.social[s.key]}
-                    className="inline-flex size-11 items-center justify-center rounded-full text-foreground transition-colors hover:bg-muted"
+                    className="inline-flex size-11 items-center justify-center rounded-full text-foreground transition-colors hover:bg-border"
                   >
                     {/* Monark's social SVGs, recoloured to foreground through a mask for contrast. */}
                     <span
@@ -107,7 +107,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
       </div>
 
       {/* Band 3: legal */}
-      <div className="border-t">
+      <div className="border-t bg-secondary dark:bg-[oklch(from_var(--background)_calc(l-0.05)_c_h)]">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-muted-foreground sm:px-6 md:flex-row md:flex-wrap md:items-center md:gap-x-4">
           <span>
             © {year} {f.legal}
