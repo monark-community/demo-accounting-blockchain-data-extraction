@@ -1,73 +1,75 @@
-# Welcome to your Lovable project
+# LedgerLift by Monark
 
-## Project info
+LedgerLift turns a wallet's on-chain history into books an accountant can read. Paste an address: every transaction comes back sorted into income, expenses, swaps and network fees, valued at the price of the day it happened. You review only what LedgerLift couldn't place, combine several wallets so transfers between them don't count twice, export a ledger or double-entry journal as CSV, and seal the report on-chain so auditors can check it later.
 
-**URL**: https://lovable.dev/projects/380676ba-5964-4030-b779-e1187f5abe3f
+It is Monark community tooling for DAO and student-association treasurers, freelancers paid in tokens and community projects. Project page: https://www.monark.io/en/project/accounting-blockchain-data-extraction
 
-## How can I edit this code?
+> This is a **demo**. The indexer, prices, wallet and chain are simulated in the browser. Nothing touches a real network, and nothing here is tax or accounting advice.
 
-There are several ways of editing your application.
+## Run it locally
 
-**Use Lovable**
+Requirements: Node 22 and pnpm 10.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/380676ba-5964-4030-b779-e1187f5abe3f) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+pnpm install
+pnpm dev            # http://localhost:3000
 ```
 
-**Edit a file directly in GitHub**
+Checks and production build:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+pnpm lint
+pnpm typecheck
+pnpm build && pnpm start
+```
 
-**Use GitHub Codespaces**
+No environment variables are needed. `NEXT_PUBLIC_SITE_URL` optionally overrides the canonical URL (default `https://ledgerlift.monark.io`).
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Screenshots (Playwright, against a running production server on port 3155):
 
-## What technologies are used for this project?
+```bash
+pnpm build && pnpm start -p 3155
+pnpm screenshots    # writes docs/screenshots/
+```
 
-This project is built with:
+## How the demo simulation works
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Everything lives behind a small typed data layer in `src/lib/demo/`, so it can be swapped for a real indexer and wagmi/viem without touching the UI:
 
-## How can I deploy this project?
+| File | Role |
+|-|-|
+| `types.ts` | Raw transactions, entries, books, rules, seals, demo state. |
+| `seed.ts` | Two sample wallets (Campus Builders DAO treasury and its operations wallet; Léa Tremblay, freelancer), a label directory, and a generator that gives any valid address a believable recent history. Testnet tokens only (tETH, tUSDC, tDAI, tLINK). |
+| `prices.ts` | Deterministic daily prices, fixed USD/CAD/EUR rates, reporting periods. |
+| `extract.ts` | The simulated indexer: reads blocks, decodes, prices and classifies with realistic latency. It can time out part-way; a retry resumes from the failed block. |
+| `classify.ts` | Category resolution, first match wins: your choice, your rules, your own wallets, known contracts, known addresses, otherwise "needs review". Also the "is this one of your wallets?" suggestion. |
+| `report.ts` | Income statement, ledger CSV, journal entries, report fingerprint, downloads. |
+| `ops.ts` | Actions on the books (open, add or remove a wallet, categorize, rules, seals). |
+| `store.ts` | A tiny external store persisted to `localStorage` (every access in try/catch), plus the wallet-prompt channel. |
+| `chain.ts`, `wallet.ts` | Simulated signing: wallet prompt, pending with a hash, confirmed in a block, or reverted. |
 
-Simply open [Lovable](https://lovable.dev/projects/380676ba-5964-4030-b779-e1187f5abe3f) and click on Share -> Publish.
+"Demo controls" (the network pill in the app bar) can slow the network, force the next extraction or seal to fail, and reset the demo.
 
-## Can I connect a custom domain to my Lovable project?
+## Project structure
 
-Yes, you can!
+```
+src/
+  app/[locale]/          routes: home, how-it-works, app (ledger), app/report, credits, pricing (unlinked), 404
+  app/                   globals.css (Monark tokens), sitemap, robots, icon
+  components/site/       standard Monark header, footer, brand, locale switch, theme
+  components/demo/       the app: start, extraction, ledger, entry sheet, report, wallet prompt, demo controls
+  components/home/       the hero "lift" card
+  components/ui/         @monark/ui registry components (shadcn)
+  i18n/                  typed EN/FR dictionaries and locale helpers
+  lib/demo/              simulated data layer (see above)
+  proxy.ts               redirects / to the preferred locale
+docs/                    site plan, asset credits, screenshots
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Deploy to Vercel
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Import the repository in Vercel with the framework defaults (Next.js, `pnpm install`, `pnpm build`). No `vercel.json` and no environment variables are required; every page prerenders. Node is pinned to 22.x in `package.json`.
+
+## Credits
+
+Built by [Monark](https://www.monark.io). Photos from Unsplash under the Unsplash License: see `docs/assets.md` and the site's `/credits` page.
