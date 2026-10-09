@@ -3,16 +3,19 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useMemo, type ReactNode } from "react"
+import { toast } from "sonner"
 
+import { AppLoading } from "@/components/ui/app-loading"
+import { AppTabs } from "@/components/ui/app-tabs"
+import { DemoControls } from "@/components/ui/demo-controls"
 import { href } from "@/i18n/config"
 import { t } from "@/i18n/t"
 import { classifyAll } from "@/lib/demo/classify"
+import { NETWORK_NAME } from "@/lib/demo/network"
 import { inPeriod } from "@/lib/demo/prices"
-import { useDemo, useStorageOk } from "@/lib/demo/store"
-import { cn } from "@/lib/utils"
+import { resetDemo, setSettings, useDemo, useStorageOk } from "@/lib/demo/store"
 
 import { useAppCopy } from "./app-provider"
-import { DemoControls } from "./demo-controls"
 
 /**
  * App chrome under the site header: ONE compact bar with the two sections on
@@ -43,64 +46,51 @@ function AppBar() {
   const demo = useDemo()
   const pathname = usePathname() ?? ""
   const { app, locale } = useAppCopy()
+  const c = app.controls
   const books = demo?.books ?? null
   const period = demo?.prefs.period ?? "q3"
   const review = useMemo(() => {
     if (!books) return 0
     return classifyAll(books).filter((e) => e.category === "review" && inPeriod(e.timestamp, period)).length
   }, [books, period])
-  const items = [
-    { href: href(locale, "/app"), label: app.nav.ledger, count: review },
-    { href: href(locale, "/app/report"), label: app.nav.report, count: 0 },
-  ]
 
   return (
-    <div className="border-b bg-secondary/40">
-      <div className="mx-auto flex min-h-13 max-w-6xl items-center gap-2 px-4 sm:px-6">
-        <nav aria-label={app.nav.label} className="min-w-0 flex-1">
-          <ul className="flex items-center gap-1 py-2">
-            {items.map((item) => {
-              const active = pathname === item.href
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "inline-flex h-9 items-center gap-2 rounded-full px-3.5 text-sm font-semibold transition-colors duration-150",
-                      active ? "bg-card text-foreground ring-1 ring-border" : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    {item.label}
-                    {item.count ? (
-                      <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-primary-foreground">
-                        <span aria-hidden="true">{item.count}</span>
-                        <span className="sr-only">{t(app.nav.review, { n: item.count })}</span>
-                      </span>
-                    ) : null}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
-        <DemoControls />
-      </div>
-    </div>
-  )
-}
-
-export function AppLoading({ label }: { label: string }) {
-  return (
-    <div role="status" aria-live="polite" className="flex flex-col gap-4">
-      <span className="sr-only">{label}</span>
-      <div className="h-9 w-64 animate-pulse rounded-full bg-muted" />
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-20 animate-pulse rounded-2xl bg-muted" />
-        ))}
-      </div>
-      <div className="h-80 animate-pulse rounded-2xl bg-muted" />
-    </div>
+    <AppTabs
+      tabs={[
+        { href: href(locale, "/app"), label: app.nav.ledger, exact: true, count: review, countLabel: t(app.nav.review, { n: review }) },
+        { href: href(locale, "/app/report"), label: app.nav.report },
+      ]}
+      pathname={pathname}
+      LinkComponent={Link}
+      label={app.nav.label}
+      actions={
+        demo ? (
+          <DemoControls
+            networkName={NETWORK_NAME}
+            slow={demo.settings.slow}
+            onSlowChange={(v) => setSettings({ slow: v })}
+            failNext={demo.settings.failNext}
+            onFailNextChange={(v) => setSettings({ failNext: v })}
+            onReset={() => {
+              resetDemo()
+              toast.success(c.resetDone)
+            }}
+            title={c.title}
+            openLabel={c.open}
+            slowLabel={c.slow}
+            slowHint={c.slowHint}
+            failNextLabel={c.failNext}
+            failNextHint={c.failNextHint}
+            resetLabel={c.reset}
+            resetHint={c.resetHint}
+            resetConfirmTitle={c.resetConfirm}
+            resetConfirmBody={c.resetConfirmBody}
+            resetConfirmLabel={c.resetDo}
+            cancelLabel={c.cancel}
+            closeLabel={app.close}
+          />
+        ) : null
+      }
+    />
   )
 }

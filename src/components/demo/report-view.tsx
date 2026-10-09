@@ -1,11 +1,13 @@
 "use client"
 
-import { AlertTriangleIcon, ChevronDownIcon, DownloadIcon, FileTextIcon, StampIcon } from "lucide-react"
+import { AlertTriangleIcon, DownloadIcon, FileTextIcon, StampIcon } from "lucide-react"
 import Link from "next/link"
 import { useMemo } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Disclosure } from "@/components/ui/disclosure"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { TxFeedback } from "@/components/ui/tx-feedback"
 import { href } from "@/i18n/config"
 import { t } from "@/i18n/t"
 import { useTx } from "@/lib/demo/chain"
@@ -20,7 +22,6 @@ import { formatBlock, formatDate, formatMoney, shortHash } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 import { useAppCopy } from "./app-provider"
-import { TxFeedback } from "./tx-feedback"
 
 /** /app/report: the period's income statement, the exports and the on-chain seal. */
 export function ReportView() {
@@ -58,7 +59,7 @@ function Report({ books, period, currency }: { books: Books; period: PeriodId; c
         </div>
         <div className="flex gap-2">
           <Select value={period} onValueChange={(v) => setPrefs({ period: v as PeriodId })}>
-            <SelectTrigger aria-label={app.period.label} className="w-auto min-w-36">
+            <SelectTrigger aria-label={app.period.label} className="min-w-36">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -70,7 +71,7 @@ function Report({ books, period, currency }: { books: Books; period: PeriodId; c
             </SelectContent>
           </Select>
           <Select value={currency} onValueChange={(v) => setPrefs({ currency: v as Currency })}>
-            <SelectTrigger aria-label={app.currency.label} className="w-auto min-w-24">
+            <SelectTrigger aria-label={app.currency.label} className="min-w-24">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -205,12 +206,8 @@ function ExportCard({ books, entries, period, currency, count }: { books: Books;
               {x.journal}
             </Button>
           </div>
-          <details className="group mt-4 rounded-2xl border">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-bold [&::-webkit-details-marker]:hidden">
-              {x.preview}
-              <ChevronDownIcon className="size-4 transition-transform duration-150 group-open:rotate-180" aria-hidden="true" />
-            </summary>
-            <div className="overflow-x-auto border-t">
+          <Disclosure summary={x.preview} className="mt-4" contentClassName="p-0">
+            <div className="overflow-x-auto">
               <table className="w-full min-w-md text-xs">
                 <thead className="text-left text-muted-foreground">
                   <tr>
@@ -233,7 +230,7 @@ function ExportCard({ books, entries, period, currency, count }: { books: Books;
               </table>
               {journal.length > 6 ? <p className="border-t px-3 py-2 text-xs text-muted-foreground">{t(x.more, { n: journal.length - 6 })}</p> : null}
             </div>
-          </details>
+          </Disclosure>
         </>
       )}
     </section>
@@ -315,7 +312,18 @@ function SealCard({ books, entries, period, review, count }: { books: Books; ent
       ) : null}
 
       <TxFeedback
-        state={tx.state.phase === "confirmed" ? { phase: "idle" } : tx.state}
+        phase={tx.state.phase}
+        hash={tx.state.hash}
+        error={tx.state.error}
+        hideConfirmed
+        signingLabel={app.tx.signing}
+        pendingLabel={app.tx.pending}
+        pendingStatusLabel={app.tx.pending}
+        confirmedLabel={app.tx.confirmed}
+        failedLabel={app.tx.failed}
+        reasons={{ rejected: app.tx.rejected, reverted: app.tx.reverted }}
+        retryLabel={app.tx.retry}
+        dismissLabel={app.tx.dismiss}
         className="mt-4"
         onRetry={() => {
           tx.reset()
