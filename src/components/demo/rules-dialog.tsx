@@ -20,15 +20,15 @@ export function RulesDialog({ books, entries }: { books: Books; entries: Entry[]
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="shrink-0">
+        <Button variant="outline">
           <ListChecksIcon aria-hidden="true" />
           {r.button}
           {books.rules.length ? <span className="text-muted-foreground tabular-nums">{books.rules.length}</span> : null}
         </Button>
       </DialogTrigger>
-      <DialogContent closeLabel={app.close} className="max-w-[calc(100%-2rem)] rounded-3xl sm:max-w-md">
+      <DialogContent closeLabel={app.close}>
         <DialogHeader>
-          <DialogTitle className="text-xl font-extrabold">{r.title}</DialogTitle>
+          <DialogTitle>{r.title}</DialogTitle>
           <DialogDescription className="sr-only">{r.title}</DialogDescription>
         </DialogHeader>
         {books.rules.length ? (

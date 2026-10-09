@@ -1,11 +1,13 @@
-import { ArrowRightIcon, ChevronDownIcon, DatabaseIcon, FileCode2Icon, FileSpreadsheetIcon, TagsIcon, TrendingUpIcon } from "lucide-react"
+import { ArrowRightIcon, DatabaseIcon, FileCode2Icon, FileSpreadsheetIcon, TagsIcon, TrendingUpIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { CategoryChip } from "@/components/demo/category-chip"
-import { SectionDivider } from "@/components/site/section-divider"
+import { SectionDivider } from "@/components/ui/section-divider"
 import { Button } from "@/components/ui/button"
+import { Disclosure } from "@/components/ui/disclosure"
+import { SectionHeading } from "@/components/ui/section-heading"
 import { href, isLocale } from "@/i18n/config"
 import { getDictionary } from "@/i18n"
 import { pageMetadata } from "@/lib/metadata"
@@ -86,14 +88,11 @@ export default async function HowItWorksPage({ params }: PageProps<"/[locale]/ho
         </ol>
       </section>
 
-      <SectionDivider />
+      <SectionDivider contained />
 
       {/* How an entry gets its category */}
       <section aria-labelledby="cat-title" className="mx-auto w-full max-w-4xl px-4 py-16 sm:px-6">
-        <h2 id="cat-title" className="text-3xl font-bold tracking-display">
-          {h.categories.title}
-        </h2>
-        <p className="mt-2 text-muted-foreground">{h.categories.sub}</p>
+        <SectionHeading titleId="cat-title" title={h.categories.title} lead={h.categories.sub} />
         <div className="mt-8 overflow-hidden rounded-3xl border bg-card">
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/50 text-left text-xs text-muted-foreground">
@@ -151,16 +150,9 @@ export default async function HowItWorksPage({ params }: PageProps<"/[locale]/ho
 
       {/* Developers */}
       <section aria-labelledby="dev-title" className="mx-auto w-full max-w-4xl px-4 py-16 sm:px-6">
-        <h2 id="dev-title" className="text-3xl font-bold tracking-display">
-          {h.dev.title}
-        </h2>
-        <p className="mt-2 text-muted-foreground">{h.dev.body}</p>
-        <details className="group mt-6 rounded-3xl border bg-card">
-          <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 font-bold [&::-webkit-details-marker]:hidden">
-            {h.dev.toggle}
-            <ChevronDownIcon className="size-4 shrink-0 transition-transform duration-150 group-open:rotate-180" aria-hidden="true" />
-          </summary>
-          <div className="border-t px-5 py-5">
+        <SectionHeading titleId="dev-title" title={h.dev.title} lead={h.dev.body} />
+        <Disclosure summary={h.dev.toggle} className="mt-6" contentClassName="px-5 py-5">
+          <div>
             <h3 className="text-sm font-bold">{h.dev.query}</h3>
             <pre className="mt-2 overflow-x-auto rounded-2xl bg-muted p-4 text-xs leading-relaxed">
               <code>{QUERY}</code>
@@ -174,19 +166,22 @@ export default async function HowItWorksPage({ params }: PageProps<"/[locale]/ho
               ))}
             </ul>
           </div>
-        </details>
+        </Disclosure>
       </section>
 
       <section className="border-t bg-card/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-14 sm:px-6 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-3xl font-bold tracking-display">{h.cta.title}</h2>
-          <Button asChild size="lg">
-            <Link href={href(locale, "/app?sample=campus")}>
-              {h.cta.button}
-              <ArrowRightIcon aria-hidden="true" />
-            </Link>
-          </Button>
-        </div>
+        <SectionHeading
+          title={h.cta.title}
+          className="mx-auto max-w-6xl gap-6 px-4 py-14 sm:px-6 md:items-center"
+          action={
+            <Button asChild size="lg">
+              <Link href={href(locale, "/app?sample=campus")}>
+                {h.cta.button}
+                <ArrowRightIcon aria-hidden="true" />
+              </Link>
+            </Button>
+          }
+        />
       </section>
     </div>
   )

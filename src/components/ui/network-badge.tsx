@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 const networkBadgeVariants = cva(
   "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors",
@@ -17,9 +17,18 @@ const networkBadgeVariants = cva(
   }
 )
 
+const statusDot = {
+  live: "bg-success",
+  degraded: "bg-warning",
+  down: "bg-destructive",
+} as const
+
+type NetworkStatus = keyof typeof statusDot
+
 function NetworkBadge({
   name,
   icon,
+  status,
   variant,
   className,
   ...props
@@ -27,19 +36,30 @@ function NetworkBadge({
   VariantProps<typeof networkBadgeVariants> & {
     name: React.ReactNode
     icon?: React.ReactNode
+    /**
+     * Shows a coloured status dot when there is no `icon`. The colour is
+     * decorative: say the state in `name` or a tooltip if it matters.
+     */
+    status?: NetworkStatus
   }) {
+  const indicator =
+    icon ??
+    (status ? (
+      <span className={cn("block rounded-full", statusDot[status])} />
+    ) : null)
+
   return (
     <span
       data-slot="network-badge"
       className={cn(networkBadgeVariants({ variant }), className)}
       {...props}
     >
-      {icon && (
+      {indicator && (
         <span
           aria-hidden="true"
           className="flex size-3.5 shrink-0 items-center justify-center overflow-hidden rounded-full [&>*]:size-full"
         >
-          {icon}
+          {indicator}
         </span>
       )}
       <span>{name}</span>
@@ -48,3 +68,4 @@ function NetworkBadge({
 }
 
 export { NetworkBadge, networkBadgeVariants }
+export type { NetworkStatus }

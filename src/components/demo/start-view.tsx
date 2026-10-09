@@ -1,10 +1,11 @@
 "use client"
 
-import { ArrowRightIcon, GraduationCapIcon, LaptopIcon, XCircleIcon } from "lucide-react"
+import { ArrowRightIcon, GraduationCapIcon, LaptopIcon } from "lucide-react"
 import Image from "next/image"
 import { useState, type FormEvent } from "react"
 
 import { Button } from "@/components/ui/button"
+import { FieldError } from "@/components/ui/field-error"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { WalletAvatar } from "@/components/ui/wallet"
@@ -43,7 +44,7 @@ export function StartView({ onAddress, onSample }: { onAddress: (address: string
       </h1>
 
       <form onSubmit={submit} noValidate className="mt-8">
-        <Label htmlFor="address" className="text-sm font-bold">
+        <Label htmlFor="address">
           {s.label}
         </Label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
@@ -61,19 +62,14 @@ export function StartView({ onAddress, onSample }: { onAddress: (address: string
             aria-describedby={error ? "address-error" : undefined}
             className="h-12 rounded-full px-5 font-mono text-sm"
           />
-          <Button type="submit" size="lg" className="shrink-0">
+          <Button type="submit" size="lg">
             {s.submit}
             <ArrowRightIcon aria-hidden="true" />
           </Button>
         </div>
-        <div aria-live="polite" className="min-h-7 pt-2">
-          {error ? (
-            <p id="address-error" className="flex items-center gap-1.5 text-sm text-destructive">
-              <XCircleIcon className="size-4 shrink-0" aria-hidden="true" />
-              {s.invalid}
-            </p>
-          ) : null}
-        </div>
+        <FieldError id="address-error" reserveSpace className="min-h-7 pt-2">
+          {error ? s.invalid : null}
+        </FieldError>
       </form>
 
       <h2 className="eyebrow mt-6 text-muted-foreground">{s.samples}</h2>

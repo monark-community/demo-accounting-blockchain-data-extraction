@@ -1,10 +1,11 @@
 "use client"
 
-import { PlusIcon, XCircleIcon } from "lucide-react"
+import { PlusIcon } from "lucide-react"
 import { useState, type FormEvent } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
+import { FieldError } from "@/components/ui/field-error"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { t } from "@/i18n/t"
@@ -42,14 +43,14 @@ export function AddWalletDialog({ books, disabled, onAdd }: { books: Books; disa
           {b.add}
         </Button>
       </DialogTrigger>
-      <DialogContent closeLabel={app.close} className="max-w-[calc(100%-2rem)] rounded-3xl sm:max-w-md">
+      <DialogContent closeLabel={app.close}>
         <form onSubmit={submit} noValidate className="flex flex-col gap-5">
           <DialogHeader>
-            <DialogTitle className="text-xl font-extrabold">{b.addTitle}</DialogTitle>
+            <DialogTitle>{b.addTitle}</DialogTitle>
             <DialogDescription className="sr-only">{b.addTitle}</DialogDescription>
           </DialogHeader>
           <div>
-            <Label htmlFor="add-address" className="text-sm font-bold">
+            <Label htmlFor="add-address">
               {b.addLabel}
             </Label>
             <Input
@@ -64,17 +65,14 @@ export function AddWalletDialog({ books, disabled, onAdd }: { books: Books; disa
               spellCheck={false}
               aria-invalid={!!error || undefined}
               aria-describedby={error ? "add-error" : undefined}
-              className="mt-2 h-10 rounded-full px-4 font-mono text-sm"
+              className="mt-2 rounded-full px-4 font-mono text-sm"
             />
-            {error ? (
-              <p id="add-error" role="alert" className="mt-2 flex items-center gap-1.5 text-sm text-destructive">
-                <XCircleIcon className="size-4 shrink-0" aria-hidden="true" />
-                {error}
-              </p>
-            ) : null}
+            <FieldError id="add-error" className="mt-2">
+              {error}
+            </FieldError>
           </div>
           <div>
-            <Label htmlFor="add-name" className="text-sm font-bold">
+            <Label htmlFor="add-name">
               {b.addName}
             </Label>
             <Input
@@ -83,7 +81,7 @@ export function AddWalletDialog({ books, disabled, onAdd }: { books: Books; disa
               onChange={(e) => setName(e.target.value)}
               placeholder={b.addNamePlaceholder}
               maxLength={32}
-              className="mt-2 h-10 rounded-full px-4"
+              className="mt-2 rounded-full px-4"
             />
           </div>
           <DialogFooter className="flex-row justify-end gap-2">

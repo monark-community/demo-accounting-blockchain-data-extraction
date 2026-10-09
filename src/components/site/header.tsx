@@ -1,65 +1,85 @@
-import { href, type Locale } from "@/i18n/config"
+"use client"
+
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+
+import { DemoChip } from "@/components/ui/demo-chip"
+import { HeaderAction } from "@/components/ui/header-action"
+import { LocaleSwitch } from "@/components/ui/locale-switch"
+import { SiteBrand } from "@/components/ui/site-brand"
+import { SiteHeader as MonarkSiteHeader } from "@/components/ui/site-header"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 import type { Dictionary } from "@/i18n"
+import { href, locales, switchLocalePath, type Locale } from "@/i18n/config"
+import { useDemo } from "@/lib/demo/store"
+import { connectWallet, disconnectWallet } from "@/lib/demo/wallet"
 
-import { Brand } from "./brand"
-import { DemoChip } from "./demo-chip"
-import { HeaderAction, type WalletLabels } from "./header-action"
-import { LocaleSwitch } from "./locale-switch"
-import { MobileMenu } from "./mobile-menu"
-import { NavLinks } from "./nav-links"
-import { ThemeToggle } from "./theme"
+export interface WalletLabels {
+  connect: string
+  connecting: string
+  disconnect: string
+  signIn: string
+  signInRow: string
+  signInValue: string
+}
 
-/** Standard Monark shell header (brand guidelines §10). */
-export function SiteHeader({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const c = dict.common
-  const items = [
-    { href: href(locale), label: c.nav.overview },
-    { href: href(locale, "/how-it-works"), label: c.nav.how },
-    { href: href(locale, "/app"), label: c.nav.demo },
-  ]
+/** Standard Monark shell header (brand guidelines §10), from @monark/ui. */
+export function SiteHeader({ locale, common, wallet }: { locale: Locale; common: Dictionary["common"]; wallet: WalletLabels }) {
+  const c = common
+  const pathname = usePathname() ?? `/${locale}`
+  const demo = useDemo()
   const appHref = href(locale, "/app")
-  const wallet: WalletLabels = {
-    connect: dict.app.wallet.connect,
-    connecting: dict.app.wallet.connecting,
-    disconnect: dict.app.wallet.disconnect,
-    signIn: dict.app.summaries.signIn,
-    signInRow: dict.app.summaries.signInRow,
-    signInValue: dict.app.summaries.signInValue,
-  }
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur-md supports-[backdrop-filter]:bg-background/85">
-      <div className="mx-auto flex h-16 max-w-6xl items-center px-4 sm:px-6">
-        <Brand href={href(locale)} product={c.product} label={c.homeLabel} />
-        <nav aria-label={c.nav.label} className="ml-7 hidden lg:block">
-          <NavLinks items={items} className="flex items-center gap-5" />
-        </nav>
-        <div className="ml-auto hidden items-center gap-2.5 lg:flex">
-          <DemoChip label={c.demoChip} title={c.demoBadge} />
-          <LocaleSwitch locale={locale} label={c.language.label} names={{ en: c.language.en, fr: c.language.fr }} short={c.language.short} />
+    <MonarkSiteHeader
+      brand={<SiteBrand name={c.product} href={href(locale)} aria-label={c.homeLabel} LinkComponent={Link} />}
+      links={[
+        { href: href(locale), label: c.nav.overview, exact: true },
+        { href: href(locale, "/how-it-works"), label: c.nav.how },
+        { href: appHref, label: c.nav.demo },
+      ]}
+      pathname={pathname}
+      LinkComponent={Link}
+      labels={{ nav: c.nav.label, openMenu: c.menu, closeMenu: c.closeMenu, menu: c.menuTitle }}
+      actions={
+        <>
+          <DemoChip label={c.demoChip} description={c.demoBadge} />
+          <LocaleSwitch
+            locales={locales}
+            current={locale}
+            hrefFor={(l) => switchLocalePath(pathname, l)}
+            labels={{ label: c.language.label, names: { en: c.language.en, fr: c.language.fr }, short: c.language.short }}
+            LinkComponent={Link}
+            linkProps={{ prefetch: false }}
+          />
           <ThemeToggle label={c.theme.toggle} />
-          <HeaderAction appHref={appHref} launchLabel={c.launchDemo} wallet={wallet} />
-        </div>
-        <MobileMenu
-          locale={locale}
-          items={items}
+        </>
+      }
+      primaryAction={
+        <HeaderAction
           appHref={appHref}
-          wallet={wallet}
-          labels={{
-            open: c.menu,
-            close: c.closeMenu,
-            title: c.menuTitle,
-            description: c.nav.label,
-            launch: c.launchDemo,
-            theme: c.theme.toggle,
-            language: c.language.label,
-            names: { en: c.language.en, fr: c.language.fr },
-            short: c.language.short,
-            demoChip: c.demoChip,
-            demoBadge: c.demoBadge,
+          pathname={pathname}
+          launchLabel={c.launchDemo}
+          LinkComponent={Link}
+          loading={!demo}
+          wallet={{
+            status: demo?.wallet.status,
+            address: demo?.wallet.address,
+            name: demo?.wallet.name,
+            connectLabel: wallet.connect,
+            connectingLabel: wallet.connecting,
+            disconnectLabel: wallet.disconnect,
+            onConnect: () =>
+              void connectWallet({
+                title: wallet.signIn,
+                rows: [{ label: wallet.signInRow, value: wallet.signInValue }],
+                movesValue: false,
+                noFee: true,
+              }),
+            onDisconnect: disconnectWallet,
           }}
         />
-      </div>
-    </header>
+      }
+    />
   )
 }

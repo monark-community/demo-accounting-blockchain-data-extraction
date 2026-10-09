@@ -5,6 +5,8 @@ import { Slot } from "radix-ui"
 
 // Monark 2026: every action is a pill. Primary is flat orange with dark text,
 // secondary is transparent with a 1px `input` border, links are underlined.
+// `destructive` is the quiet outline form; `destructive-solid` is the filled
+// red CTA used by destructive AlertDialogs.
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent text-sm font-bold whitespace-nowrap transition-colors duration-150 ease-out outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
@@ -20,6 +22,11 @@ const buttonVariants = cva(
           "text-foreground hover:bg-muted aria-expanded:bg-muted",
         destructive:
           "border-destructive/40 bg-transparent text-destructive hover:bg-destructive/10",
+        // Solid red CTA for confirming irreversible actions. Text uses
+        // destructive-foreground (white in light, espresso in dark): white on
+        // the dark-mode red is only 3.5:1, espresso on it is 5.5:1.
+        "destructive-solid":
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/40 dark:focus-visible:ring-destructive/60",
         link: "rounded-none px-0 text-primary-ink underline underline-offset-4 hover:decoration-2",
       },
       size: {

@@ -4,7 +4,7 @@ import * as React from "react"
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon"
 import { CheckIcon, CopyIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 
 function truncateAddress(address: string, start = 6, end = 4) {
@@ -31,7 +31,9 @@ function Wallet({
   name?: string
   size?: WalletSize
   showCopy?: boolean
+  /** Copy button name before copying. Default "Copy address". */
   copyLabel?: string
+  /** Copy button name once copied. Default "Address copied". */
   copiedLabel?: string
 }) {
   return (
@@ -58,7 +60,13 @@ function Wallet({
           )}
         />
       </div>
-      {showCopy && <WalletCopyButton address={address} copyLabel={copyLabel} copiedLabel={copiedLabel} />}
+      {showCopy && (
+        <WalletCopyButton
+          address={address}
+          copyLabel={copyLabel}
+          copiedLabel={copiedLabel}
+        />
+      )}
     </div>
   )
 }
@@ -111,9 +119,9 @@ function WalletAddress({
 
 function WalletCopyButton({
   address,
-  className,
   copyLabel = "Copy address",
   copiedLabel = "Address copied",
+  className,
   ...props
 }: Omit<React.ComponentProps<typeof Button>, "children" | "onClick"> & {
   address: string
@@ -121,13 +129,16 @@ function WalletCopyButton({
   copiedLabel?: string
 }) {
   const [copied, setCopied] = React.useState(false)
+  const timeout = React.useRef<number | undefined>(undefined)
+
+  React.useEffect(() => () => window.clearTimeout(timeout.current), [])
 
   const onCopy = React.useCallback(() => {
     if (!navigator.clipboard) return
     navigator.clipboard.writeText(address).then(() => {
       setCopied(true)
-      const id = window.setTimeout(() => setCopied(false), 1500)
-      return () => window.clearTimeout(id)
+      window.clearTimeout(timeout.current)
+      timeout.current = window.setTimeout(() => setCopied(false), 1500)
     })
   }, [address])
 
@@ -135,10 +146,10 @@ function WalletCopyButton({
     <Button
       type="button"
       variant="ghost"
-      size="icon"
+      size="icon-xs"
       onClick={onCopy}
       aria-label={copied ? copiedLabel : copyLabel}
-      className={cn("size-7", className)}
+      className={className}
       {...props}
     >
       {copied ? (

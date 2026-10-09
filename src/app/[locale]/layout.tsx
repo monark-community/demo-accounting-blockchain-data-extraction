@@ -6,7 +6,7 @@ import "../globals.css"
 
 import { SiteFooter } from "@/components/site/footer"
 import { SiteHeader } from "@/components/site/header"
-import { ThemeProvider } from "@/components/site/theme"
+import { ThemeProvider } from "@/components/ui/theme-toggle"
 import { isLocale, locales, SITE_URL } from "@/i18n/config"
 import { getDictionary } from "@/i18n"
 
@@ -66,7 +66,18 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           >
             {dict.common.skip}
           </a>
-          <SiteHeader locale={locale} dict={dict} />
+          <SiteHeader
+            locale={locale}
+            common={dict.common}
+            wallet={{
+              connect: dict.app.wallet.connect,
+              connecting: dict.app.wallet.connecting,
+              disconnect: dict.app.wallet.disconnect,
+              signIn: dict.app.summaries.signIn,
+              signInRow: dict.app.summaries.signInRow,
+              signInValue: dict.app.summaries.signInValue,
+            }}
+          />
           <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
             {children}
           </main>

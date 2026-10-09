@@ -5,6 +5,13 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // components/ui is installed from the @monark/ui registry and re-added with
+  // --overwrite, so it is fixed upstream rather than here. SiteHeader closes
+  // its mobile sheet in an effect when the pathname changes.
+  {
+    files: ["src/components/ui/**"],
+    rules: { "react-hooks/set-state-in-effect": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
