@@ -1,11 +1,11 @@
 "use client"
 
-import { ChevronDownIcon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Disclosure } from "@/components/ui/disclosure"
 import { InfoTip } from "@/components/ui/info-tip"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -63,7 +63,7 @@ export function EntrySheet({
   const { app } = useAppCopy()
   return (
     <Sheet open={!!entry} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" closeLabel={app.close} className="w-full gap-0 p-0 sm:max-w-md">
+      <SheetContent side="right" closeLabel={app.close} className="sm:max-w-md">
         {entry ? <SheetBody key={entry.hash} entry={entry} books={books} entries={entries} currency={currency} onClose={onClose} onSaved={onSaved} /> : null}
       </SheetContent>
     </Sheet>
@@ -120,7 +120,7 @@ function SheetBody({
         <SheetDescription className="text-xs">
           {e.direction === "in" ? app.table.in : e.method === "swap" ? app.table.swap : app.table.out} · {formatDateTime(e.timestamp, locale)}
         </SheetDescription>
-        <SheetTitle className="truncate text-xl font-extrabold">{who ?? shortAddress(e.counterparty)}</SheetTitle>
+        <SheetTitle className="truncate text-xl">{who ?? shortAddress(e.counterparty)}</SheetTitle>
       </SheetHeader>
 
       <div className="flex-1 overflow-y-auto px-5 py-5">
@@ -194,7 +194,7 @@ function SheetBody({
         {!own ? (
           <div className="mt-6 flex flex-col gap-4">
             <div>
-              <Label htmlFor="entry-label" className="text-sm font-bold">
+              <Label htmlFor="entry-label">
                 {s.label}
               </Label>
               <Input
@@ -203,7 +203,7 @@ function SheetBody({
                 onChange={(ev) => setLabel(ev.target.value)}
                 placeholder={who ?? s.labelPlaceholder}
                 maxLength={48}
-                className="mt-2 h-10 rounded-full px-4"
+                className="mt-2 rounded-full px-4"
               />
             </div>
             {sameCount > 1 ? (
@@ -217,12 +217,8 @@ function SheetBody({
           </div>
         ) : null}
 
-        <details className="group mt-6 rounded-2xl border">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-bold [&::-webkit-details-marker]:hidden">
-            {s.onchain}
-            <ChevronDownIcon className="size-4 transition-transform duration-150 group-open:rotate-180" aria-hidden="true" />
-          </summary>
-          <dl className="divide-y border-t text-xs">
+        <Disclosure summary={s.onchain} className="mt-6" contentClassName="p-0">
+          <dl className="divide-y text-xs">
             {[
               { k: s.hash, v: e.hash, mono: true },
               { k: s.block, v: formatBlock(e.block, locale) },
@@ -240,7 +236,7 @@ function SheetBody({
               </div>
             ))}
           </dl>
-        </details>
+        </Disclosure>
       </div>
 
       <SheetFooter className="flex-row justify-end gap-2 border-t px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">

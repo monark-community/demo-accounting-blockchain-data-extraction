@@ -4,6 +4,7 @@ import { LinkIcon, PlusIcon, SearchIcon, SparklesIcon, XIcon } from "lucide-reac
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Empty, EmptyContent, EmptyTitle } from "@/components/ui/empty"
 import { InfoTip } from "@/components/ui/info-tip"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -235,7 +236,7 @@ function Ledger({
         </div>
         <div className="flex items-center gap-2">
           <Select value={period} onValueChange={(v) => setPrefs({ period: v as PeriodId })}>
-            <SelectTrigger aria-label={app.period.label} className="w-auto min-w-36">
+            <SelectTrigger aria-label={app.period.label} className="min-w-36">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -303,7 +304,7 @@ function Ledger({
 
       {/* Filters and search. */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div role="group" aria-label={app.filters.label} className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none] md:pb-0">
+        <div role="group" aria-label={app.filters.label} className="no-scrollbar -mx-1 flex gap-1 overflow-x-auto px-1 pb-1 md:pb-0">
           {filters.map((f) => (
             <button
               key={f.id}
@@ -343,7 +344,7 @@ function Ledger({
             }}
             placeholder={app.filters.search}
             aria-label={app.filters.search}
-            className="h-10 rounded-full pl-10"
+            className="rounded-full pl-10"
           />
         </div>
       </div>
@@ -543,9 +544,9 @@ function EmptyState({ filter, query, period, hasAny }: { filter: Filter; query: 
     action = null
   }
   return (
-    <div role="status" className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-4 py-12 text-center">
-      <p className="font-semibold">{line}</p>
-      {action}
-    </div>
+    <Empty role="status">
+      <EmptyTitle>{line}</EmptyTitle>
+      {action ? <EmptyContent>{action}</EmptyContent> : null}
+    </Empty>
   )
 }

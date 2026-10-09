@@ -6,7 +6,8 @@ import { notFound } from "next/navigation"
 
 import { CategoryChip } from "@/components/demo/category-chip"
 import { LiftCard, type LiftExample } from "@/components/home/lift-card"
-import { SectionDivider } from "@/components/site/section-divider"
+import { SectionDivider } from "@/components/ui/section-divider"
+import { SectionHeading } from "@/components/ui/section-heading"
 import { Button } from "@/components/ui/button"
 import { href, isLocale, type Locale } from "@/i18n/config"
 import { getDictionary, type Dictionary } from "@/i18n"
@@ -116,9 +117,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       {/* Books you can hand over */}
       <section aria-labelledby="features-title" className="border-t bg-card/60">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-          <h2 id="features-title" className="text-3xl font-bold tracking-display sm:text-[2rem]">
-            {h.features.title}
-          </h2>
+          <SectionHeading titleId="features-title" title={h.features.title} />
           <ul className="mt-10 grid gap-5 md:grid-cols-3">
             {h.features.items.map((item, i) => {
               const Icon = icons[i]!
@@ -139,9 +138,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       {/* For whoever keeps the books */}
       <section aria-labelledby="who-title" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-        <h2 id="who-title" className="text-3xl font-bold tracking-display sm:text-[2rem]">
-          {h.who.title}
-        </h2>
+        <SectionHeading titleId="who-title" title={h.who.title} />
         <ul className="mt-10 grid gap-6 md:grid-cols-3">
           {h.who.items.map((item, i) => {
             const photo = PHOTOS[i]!
@@ -158,13 +155,11 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </ul>
       </section>
 
-      <SectionDivider />
+      <SectionDivider contained />
 
       {/* FAQ */}
       <section aria-labelledby="faq-title" className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 lg:py-20">
-        <h2 id="faq-title" className="text-3xl font-bold tracking-display sm:text-[2rem]">
-          {h.faq.title}
-        </h2>
+        <SectionHeading titleId="faq-title" title={h.faq.title} />
         <div className="mt-8 divide-y rounded-3xl border bg-card">
           {h.faq.items.map((item) => (
             <details key={item.q} className="group px-5 sm:px-6">
@@ -182,15 +177,18 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       {/* Closing */}
       <section className="border-t bg-card/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-16 sm:px-6 md:flex-row md:items-center md:justify-between lg:py-20">
-          <h2 className="text-3xl font-bold tracking-display sm:text-[2rem]">{h.closing.title}</h2>
-          <Button asChild size="lg">
-            <Link href={appHref}>
-              {h.closing.cta}
-              <ArrowRightIcon aria-hidden="true" />
-            </Link>
-          </Button>
-        </div>
+        <SectionHeading
+          title={h.closing.title}
+          className="mx-auto max-w-6xl gap-6 px-4 py-16 sm:px-6 md:items-center lg:py-20"
+          action={
+            <Button asChild size="lg">
+              <Link href={appHref}>
+                {h.closing.cta}
+                <ArrowRightIcon aria-hidden="true" />
+              </Link>
+            </Button>
+          }
+        />
       </section>
     </>
   )
