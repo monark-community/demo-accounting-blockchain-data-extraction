@@ -8,7 +8,7 @@ import {
   Wallet as WalletIcon,
 } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -47,21 +47,26 @@ function ConnectWallet({
   if (status === "connecting") {
     return (
       <Button disabled className={className} {...props}>
-        <Loader2Icon className="size-4 animate-spin" />
+        <Loader2Icon className="animate-spin" />
         {connectingLabel}
       </Button>
     )
   }
 
   if (status === "connected" && address) {
+    // Button-only props have no meaning on the plain trigger; the rest (data-*,
+    // aria-*, id) still reach the DOM.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { variant, size, asChild, ...triggerProps } = props
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
             data-slot="connect-wallet-trigger"
+            {...triggerProps}
             className={cn(
-              "inline-flex items-center gap-2.5 rounded-full border bg-card p-1 pr-3 text-card-foreground outline-hidden transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "inline-flex h-10 max-w-full items-center gap-2.5 rounded-full border bg-card p-1 pr-3 text-card-foreground outline-hidden transition-colors hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-expanded:bg-muted",
               className
             )}
           >
@@ -83,7 +88,7 @@ function ConnectWallet({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onSelect={onDisconnect}>
-            <LogOutIcon className="size-4" />
+            <LogOutIcon />
             {disconnectLabel}
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -93,7 +98,7 @@ function ConnectWallet({
 
   return (
     <Button onClick={onConnect} className={className} {...props}>
-      <WalletIcon className="size-4" />
+      <WalletIcon />
       {connectLabel}
     </Button>
   )
