@@ -5,7 +5,9 @@
   "description": "LedgerLift by Monark: wallet history turned into categorized, priced books for accountants (simulated testnet demo).",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/check-node.mjs",
     "build": "next build",
+    "prestart": "node scripts/check-node.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
